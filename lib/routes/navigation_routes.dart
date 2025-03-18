@@ -1,7 +1,6 @@
 import 'package:flutter_demo/view/movies.dart';
 import 'package:go_router/go_router.dart';
 
-import '../view/homepage.dart';
 import '../view/loginpage.dart';
 
 class NavigationRouter {

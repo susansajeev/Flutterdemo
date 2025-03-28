@@ -44,58 +44,63 @@ class _FruiteScreenState extends State<FruitsScreen> {
 
             Expanded(
               flex: 2,
-              child: ListView.separated(
+              child: GridView.builder(
                 itemCount: fruitsList.length,
                 itemBuilder:
-                    (context, index) => ListTile(
-                      leading: Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.lime, // Border color
-                            width: 2, // Border width
+                    (context, index) => GridTile(
+                      child: Column(
+                        spacing: 5,
+                        children: <Widget>[
+                          Stack(
+                            alignment: AlignmentDirectional.bottomEnd,
+                            children: [
+                              Image.network(
+                                fruitsList[index].image,
+                                fit: BoxFit.cover,
+                                width: 150,
+                                height: 150,
+                                loadingBuilder: (
+                                  context,
+                                  child,
+                                  loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) {
+                                    return child; // Image loaded successfully
+                                  }
+                                  return const CircularProgressIndicator(); // Show a loader
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(
+                                    Icons.error,
+                                    size: 50,
+                                    color: Colors.red,
+                                  );
+                                },
+                              ),
+                              Image.asset(
+                                ImageConstants.delete,
+                                width: 20,
+                                height: 20,
+                              )
+                            ],
                           ),
-                        ),
-                        child: Image.network(
-                          fruitsList[index].image,
-                          fit: BoxFit.cover,
-                          width: 50,
-                          height: 50,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) {
-                              return child; // Image loaded successfully
-                            }
-                            return const CircularProgressIndicator(); // Show a loader
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              Icons.error,
-                              size: 50,
-                              color: Colors.red,
-                            );
-                          },
-                        ),
-                      ),
-                      title: Text(
-                        fruitsList[index].name!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      trailing: IconButton(
-                        onPressed: () => onDelete(index),
-                        icon: Image.asset(
-                          ImageConstants.delete,
-                          width: 20,
-                          height: 20,
-                        ),
+                          Text(
+                            fruitsList[index].name,
+
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider(color: Colors.cyan, height: 2);
-                },
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 1,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.8,
+                ),
               ),
             ),
           ],

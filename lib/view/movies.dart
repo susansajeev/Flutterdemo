@@ -1,8 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/constant/image_constant.dart';
 import 'package:flutter_demo/model/moviedata.dart';
+import 'package:flutter_demo/routes/navigation_routes.dart';
 import 'package:flutter_demo/view/fruits_page.dart';
+
+import 'detail_page.dart';
 
 class Movies extends StatefulWidget {
   const Movies({super.key});
@@ -41,7 +45,8 @@ class _MovieState extends State<Movies> {
                 child: ListView.separated(
                   itemCount: movies.length,
                   itemBuilder:
-                      (context, index) => ListTile(
+                      (context, index) =>
+                      ListTile(
                         leading: Container(
                           clipBehavior: Clip.hardEdge,
                           decoration: BoxDecoration(
@@ -86,7 +91,7 @@ class _MovieState extends State<Movies> {
                             height: 20,
                           ),
                         ),
-                        onTap: onTileClick,
+                        onTap: () => onTileClick(index),
                       ),
                   separatorBuilder: (BuildContext context, int index) {
                     return Divider(color: Colors.cyan, height: 2);
@@ -94,7 +99,20 @@ class _MovieState extends State<Movies> {
                 ),
               ),
             ),
-            ElevatedButton(onPressed: onFilterClick, child: Text("Filter by Name"))
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                      onPressed: onFilterClick, child: Text("Filter by Name")),
+                  ElevatedButton(
+                      onPressed: onFruitClick, child: Text("Move to Fruits")),
+                  ElevatedButton(
+                      onPressed: onPostAPIClick, child: Text("Add Device")),
+                ]
+
+            ),
+
+
           ],
         ),
       ),
@@ -102,14 +120,31 @@ class _MovieState extends State<Movies> {
   }
 
   void onDelete(int index) {
-    setState(() {
-      movies.removeAt(index);
-      if (movies.isEmpty) {
-        isEmptyText = true;
-      } else {
-        isEmptyText = false;
-      }
-    });
+    showDialog(context: context, builder: (context) =>
+        CupertinoAlertDialog(
+          title: Text("Delete"),
+          content: Text("Are you sure want to delete ${movies[index].title} ?"),
+          actions: [
+
+            CupertinoDialogAction(onPressed: () {
+              Navigator.of(context).pop();
+            }, child: Text("Cancel"),),
+
+            CupertinoDialogAction(onPressed: () {
+              setState(() {
+                movies.removeAt(index);
+                if (movies.isEmpty) {
+                  isEmptyText = true;
+                } else {
+                  isEmptyText = false;
+                }
+              });
+              Navigator.of(context).pop();
+            }, isDestructiveAction: true, child: Text("Yes"),)
+          ],
+        )
+    );
+
   }
 
   Future<void> relodData() async {
@@ -123,19 +158,40 @@ class _MovieState extends State<Movies> {
     });
   }
 
-  void onTileClick() {
+  void onTileClick(int index) {
+    Navigator.pushNamed(
+      context,
+      NavigationRouter.detailScreen,
+      arguments: {"movie": movies[index]},
+    );
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => DetailMovie(movieData: movies[index]),
+    //   ),
+    //
+    // );
+  }
+
+  void onFilterClick() {
+    setState(() {
+      isEmptyText = false;
+      movies = movies
+          .where((movie) => movie.title == "The Wolf of Wall Street")
+          .toList();
+      print("Resp $movies");
+    });
+  }
+
+  void onFruitClick() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => FruitsScreen()),
     );
   }
 
-  void onFilterClick() {
-
-   setState(() {
-     isEmptyText = false;
-     movies =  movies.where((movie)=> movie.title == "The Wolf of Wall Street").toList();
-     print("Resp $movies");
-   });
+  void onPostAPIClick() async {
+    var uri = Uri.parse("https://api.restful-api.dev/objects");
   }
+
+
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/routes/navigation_routes.dart';
+import 'package:flutter_demo/view/movies.dart';
+
+import 'detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,8 +46,15 @@ class _MyHomePageState extends State<MyHomePage> {
     //   home: const MyHomePage(title: 'Flutter Demo Home Page'),
     // );
     //router
-    return MaterialApp.router(
-      routerConfig: NavigationRouter().router,
+    return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Movies(),
+        '/detailscreen': (context) => DetailMovie(), // Register SecondScreen
+      },
     );
+    // return MaterialApp.router(
+    //   routerConfig: NavigationRouter().router,
+    // );
   }
 }
